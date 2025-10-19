@@ -1,127 +1,183 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Supabase CLI
 
-# Run and deploy your Codex-powered app
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-This guide covers everything you need to run the project locally with OpenAI Codex powering letter generation and GitHub Copilot assisting in your editor.
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-## Run Locally
+This repository contains all the functionality for Supabase CLI.
 
-**Prerequisites:** Node.js 20+ and PNPM 9+
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-1. Install dependencies:
-   `pnpm install`
-2. Set the `OPENAI_API_KEY` in `.env.local` (or your shell) to your OpenAI key
-3. Run the app:
-   `pnpm dev`
+## Getting started
 
-## Deploy to Netlify (approved-my-lawyer)
+### Install the CLI
 
-You can deploy this project to Netlify with a single script. The site name requested: `approved My Lawyer` (Netlify slug will become `approved-my-lawyer`).
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
-### 1. Prerequisites
-
-- Netlify account: https://app.netlify.com
-- Personal Access Token (PAT): Create one at https://app.netlify.com/user/applications#personal-access-tokens
-- Node.js v20+ (build uses 20.19.0 in `netlify.toml`)
-
-### 2. Prepare Environment Variables
-
-Create a local `.env` (NOT committed) or export in your shell:
-
-```
-export VITE_SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
-export VITE_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
-export VITE_API_URL="https://YOUR-PROJECT.supabase.co"
-export OPENAI_API_KEY="YOUR_OPENAI_KEY"
-export NETLIFY_AUTH_TOKEN="YOUR_NETLIFY_PAT"
+```bash
+npm i supabase --save-dev
 ```
 
-Alternatively, copy `.env.example` to `.env` and fill in values (for local dev only).
+To install the beta release channel:
 
-### 3. One-Command Build & Deploy
-
-```
-./deploy-netlify.sh
+```bash
+npm i supabase@beta --save-dev
 ```
 
-The script will:
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-1. Ensure the project is built (`pnpm build` if `dist/` missing)
-2. Create the site `approved-my-lawyer` if it does not exist
-3. Push environment variables to Netlify (only those present in your shell)
-4. Trigger a production deploy
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
 
-### 4. Manual Netlify Setup (If you prefer UI)
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-1. New Site -> Import from Git
-2. Select this repository
-3. Build command: `npm run build`
-4. Publish directory: `dist`
-5. Add environment variables:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_API_URL` (can match Supabase URL)
-   - `OPENAI_API_KEY`
-6. Deploy, then visit the URL Netlify provides.
+<details>
+  <summary><b>macOS</b></summary>
 
-### 5. Post-Deployment Checklist
+  Available via [Homebrew](https://brew.sh). To install:
 
-- Auth flows (signup/login/reset) work
-- Network calls hit Netlify Functions (`/api/*` -> `/.netlify/functions/*` per `netlify.toml`)
-- CSP / mixed content (if you later add) are clean
-- No 404 on client-side routes (fallback redirect configured)
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-### 6. Updating Deployment
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
 
-Push to `main` (if connected) or re-run `./deploy-netlify.sh` for ad-hoc deploys.
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
 
----
+<details>
+  <summary><b>Windows</b></summary>
 
-If the automated script fails due to auth, confirm the `NETLIFY_AUTH_TOKEN` is valid and has write permissions.
+  Available via [Scoop](https://scoop.sh). To install:
 
-### Security: Supabase Service Role Handling
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
 
-The Supabase service role key must NEVER be exposed to the browser.
+  To upgrade:
 
-Guidelines:
+  ```powershell
+  scoop update supabase
+  ```
+</details>
 
-1. Do NOT store it in any variable beginning with `VITE_`.
-2. Provide it only as `SUPABASE_SERVICE_ROLE_KEY` in Netlify environment settings.
-3. Use it exclusively inside server contexts (Netlify Functions / Edge Functions / Supabase functions).
-4. The helper `services/supabaseAdmin.ts` centralizes creation of the privileged client.
-5. If leaked, rotate the key in the Supabase dashboard immediately.
+<details>
+  <summary><b>Linux</b></summary>
 
-Client code should always use the anon key (`VITE_SUPABASE_ANON_KEY`).
+  Available via [Homebrew](https://brew.sh) and Linux packages.
 
-### Key Rotation Policy
+  #### via Homebrew
 
-To reduce blast radius, rotate sensitive credentials on a schedule and after any suspected exposure.
+  To install:
 
-| Secret                    | Scope                           | Recommended Cadence | Triggered Rotation Events                         |
-| ------------------------- | ------------------------------- | ------------------- | ------------------------------------------------- |
-| SUPABASE_SERVICE_ROLE_KEY | Server-only (Netlify Functions) | Quarterly           | Leak, permission changes, repo history rewrite    |
-| VITE_SUPABASE_ANON_KEY    | Public (client)                 | Semi-annual         | Leak, Supabase project clone, auth config changes |
-| OPENAI_API_KEY            | Server-only                     | Quarterly           | Leak, provider policy change                      |
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-Rotation (Service Role Example):
+  To upgrade:
 
-1. Generate new key in Supabase: Settings → API → Regenerate service_role.
-2. Add new value in Netlify as `SUPABASE_SERVICE_ROLE_KEY` (keep old until deploy validated if zero-downtime needed).
-3. Trigger deploy.
-4. Verify protected endpoints (e.g. get-all-users) still succeed.
-5. Remove old key from Supabase (invalidate) and any local shells.
-6. Confirm built JS bundles do NOT contain the new key (grep first 8 chars—should be absent).
+  ```sh
+  brew upgrade supabase
+  ```
 
-Incident Response Steps:
+  #### via Linux packages
 
-1. Revoke/rotate affected keys immediately.
-2. Audit Supabase logs (Auth + SQL) for anomalous access.
-3. Force sign-out (invalidate refresh tokens) if user session compromise suspected.
-4. Document timeline & remediation.
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
 
-Future Automation Ideas:
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
 
-- CI grep for base64 JWT header pattern: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ`.
-- Scripted rotation + deployment verification.
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
+
+```bash
+supabase bootstrap
+```
+
+Or using npx:
+
+```bash
+npx supabase bootstrap
+```
+
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
+```
