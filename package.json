@@ -19,7 +19,6 @@
     "lint": "prettier --check . && echo 'Prettier check passed'"
   },
   "dependencies": {
-    "@anthropic-ai/claude-code": "^2.0.22",
     "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -47,6 +46,7 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@anthropic-ai/claude-code": "^2.0.22",
     "@netlify/functions": "^2.8.2",
     "@netlify/vite-plugin-netlify-edge": "^1.1.3",
     "@types/node": "^24.7.0",
