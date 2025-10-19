@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Email Change - Talk to My Lawyer</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8fafc;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .logo {
+        color: white;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .header-subtitle {
+        color: #e2e8f0;
+        font-size: 18px;
+        font-weight: 300;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .change-text {
+        color: #1a202c;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .description {
+        color: #4a5568;
+        font-size: 16px;
+        line-height: 1.8;
+        margin-bottom: 30px;
+      }
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 18px 36px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+      .email-details {
+        background-color: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 25px;
+        margin: 30px 0;
+        border-radius: 0 8px 8px 0;
+      }
+      .email-title {
+        color: #0c4a6e;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+      .email-info {
+        color: #075985;
+        font-size: 15px;
+        margin: 8px 0;
+        font-family: monospace;
+        background-color: #e0f2fe;
+        padding: 8px 12px;
+        border-radius: 6px;
+      }
+      .security-note {
+        background-color: #fef2f2;
+        border: 2px solid #fecaca;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 30px 0;
+      }
+      .security-title {
+        color: #dc2626;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+      }
+      .security-text {
+        color: #7f1d1d;
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 8px 0;
+      }
+      .footer {
+        background-color: #2d3748;
+        padding: 30px;
+        text-align: center;
+      }
+      .footer-text {
+        color: #cbd5e0;
+        font-size: 14px;
+        margin: 8px 0;
+        line-height: 1.5;
+      }
+      .url-text {
+        word-break: break-all;
+        color: #4a5568;
+        background-color: #f7fafc;
+        padding: 10px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 12px;
+        margin: 10px 0;
+      }
+      .help-section {
+        background-color: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 0 8px 8px 0;
+      }
+      .help-title {
+        color: #0c4a6e;
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .help-text {
+        color: #075985;
+        font-size: 14px;
+        margin: 0;
+      }
+      @media (max-width: 600px) {
+        .container {
+          margin: 0 10px;
+        }
+        .content {
+          padding: 30px 20px;
+        }
+        .change-text {
+          font-size: 24px;
+        }
+        .cta-button {
+          padding: 15px 30px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">⚖️ Talk to My Lawyer</div>
+        <div class="header-subtitle">Email Address Change Confirmation</div>
+      </div>
+
+      <div class="content">
+        <h1 class="change-text">📧 Confirm Email Change</h1>
+
+        <p class="description">
+          We received a request to change the email address associated with your
+          <strong>TalkToMyLawyer.com</strong> account. To complete this change
+          and ensure account security, please confirm your new email address.
+        </p>
+
+        <div class="email-details">
+          <div class="email-title">📬 Email Change Details</div>
+          <div class="email-info">
+            <strong>New Email:</strong> {{ .Email }}<br />
+            <strong>Account:</strong> Talk to My Lawyer<br />
+            <strong>Change Requested:</strong> {{ .ConfirmationSentAt }}
+          </div>
+        </div>
+
+        <div style="text-align: center">
+          <a href="{{ .ConfirmationURL }}" class="cta-button">
+            Confirm New Email Address
+          </a>
+        </div>
+
+        <div class="security-note">
+          <div class="security-title">🛡️ Important Security Information</div>
+          <div class="security-text">
+            <strong>⏰ Time Sensitive:</strong> This email confirmation link
+            will expire in <strong>24 hours</strong> for security purposes.
+          </div>
+          <div class="security-text">
+            <strong>🔒 Account Protection:</strong> Until you confirm this new
+            email address, your account will continue using your previous email
+            for all communications.
+          </div>
+          <div class="security-text">
+            <strong>❌ Didn't Request This?</strong> If you didn't request this
+            email change, please ignore this message and contact our security
+            team immediately.
+          </div>
+        </div>
+
+        <div class="help-section">
+          <div class="help-title">💡 What Happens Next?</div>
+          <div class="help-text">
+            Once you confirm your new email address:<br />
+            • All future communications will be sent to your new email<br />
+            • Your login credentials will remain the same<br />
+            • Account security notifications will use the new email<br />
+            • You'll receive a confirmation that the change was successful
+          </div>
+        </div>
+
+        <p class="description">
+          <strong>Need help?</strong> If you're experiencing any issues with
+          this email change or have questions about your account security, our
+          support team is available 24/7 to assist you.
+        </p>
+      </div>
+
+      <div class="footer">
+        <p class="footer-text">
+          <strong>Having trouble with the button above?</strong><br />
+          Copy and paste this URL into your browser:
+        </p>
+        <div class="url-text">{{ .ConfirmationURL }}</div>
+        <p class="footer-text">
+          <strong>Talk to My Lawyer</strong> - Secure Legal Communication
+          Platform<br />
+          📧 security@talktomylawyer.com | 🌐 www.talktomylawyer.com
+        </p>
+        <p class="footer-text">
+          © 2025 Talk to My Lawyer. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
