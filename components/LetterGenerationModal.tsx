@@ -222,44 +222,62 @@ export const LetterGenerationModal: React.FC<LetterGenerationModalProps> = ({
 
   const handleGenerateLetter = async () => {
     try {
-      // Call the generate-draft Edge Function
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-draft`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            letterId: savedLetterId,
-            title: formData.title,
-            letterRequest: {
-              senderName: formData.senderName,
-              recipientName: formData.recipientName,
-              matter: formData.description,
-              desiredResolution:
-                formData.additionalInstructions || "Professional resolution",
-              letterType: formData.letterType,
-              priority: formData.priority,
-            },
-          }),
-        },
-      );
+      // Import Z.AI service
+      const { zaiService } = await import("../services/zaiService");
 
-      if (response.ok) {
-        const data = await response.json();
-        setGeneratedContent(
-          data.draft || data.content || "Letter generated successfully!",
+      // Call Z.AI API for letter generation
+      const generatedLetter = await zaiService.generateLetter({
+        title: formData.title,
+        senderName: formData.senderName,
+        recipientName: formData.recipientName,
+        matter: formData.description,
+        desiredResolution: formData.additionalInstructions || "Professional resolution",
+        letterType: formData.letterType,
+        priority: formData.priority,
+      });
+
+      setGeneratedContent(generatedLetter);
+    } catch (error) {
+      console.error("Error generating letter with Z.AI:", error);
+      // Fallback to Supabase Edge Function if Z.AI fails
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-draft`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              letterId: savedLetterId,
+              title: formData.title,
+              letterRequest: {
+                senderName: formData.senderName,
+                recipientName: formData.recipientName,
+                matter: formData.description,
+                desiredResolution:
+                  formData.additionalInstructions || "Professional resolution",
+                letterType: formData.letterType,
+                priority: formData.priority,
+              },
+            }),
+          },
         );
-      } else {
-        // Fallback sample content if generation fails
+
+        if (response.ok) {
+          const data = await response.json();
+          setGeneratedContent(
+            data.draft || data.content || "Letter generated successfully!",
+          );
+        } else {
+          // Final fallback to sample content
+          setGeneratedContent(generateSampleLetter());
+        }
+      } catch (fallbackError) {
+        console.error("Error with fallback generation:", fallbackError);
         setGeneratedContent(generateSampleLetter());
       }
-    } catch (error) {
-      console.error("Error generating letter:", error);
-      // Use sample content on error
-      setGeneratedContent(generateSampleLetter());
     }
   };
 
